@@ -1,8 +1,8 @@
-// const socket = io();
+const socket = io();
 
-// socket.on("message", message => {
-//     console.log(message);
-// })
+socket.on("message", message => {
+    console.log(message);
+})
 
 // main resize on arrival of sidebar
 const sideBar = document.getElementById("side-bar")
@@ -23,20 +23,22 @@ document.getElementById("concept").addEventListener("input", () => {
     msgInput.setAttribute("data-value",event.target.value + ".");
 });
 
+// Submit message on enter
 function submitOnEnter(event){
-    if(event.which === 13){
-        if(!event.shiftKey){
+    if(event.which === 13){ // if enter
+        if(!event.shiftKey){ // shift + enter reserved for newline
             msg = event.target.value.trim();
             event.target.value = "";
-            event.target.form.dispatchEvent(new Event("submit", {cancelable: true}));
-            event.preventDefault(); // Prevents the addition of a new line in the text field (not needed in a lot of cases)
+            event.target.form.dispatchEvent(new Event("submit", {cancelable: true})); // create submit event, catchable by eventlistener
+            event.preventDefault(); // prevent newline
         }
     }
 }
 
+// Submit message
 document.getElementById("chat-form").addEventListener("submit", (event) => {
-    event.preventDefault();
+    event.preventDefault(); // prevent reload
     if(msg != ""){
-        console.log(msg);
+        socket.emit("chatMessage", msg);
     }
 });
