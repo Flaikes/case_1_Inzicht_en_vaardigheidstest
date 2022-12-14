@@ -24,11 +24,36 @@ De volgende technische voorwaarden zijn van toepassing:
 		-form
 	-chat page
 		*dynamic
+		*scroll to new message v temporary new message bubble
 		-side-bar
 		-chat
 			-bubble v discord style	
+			*multi-line input
 -back-end
 	*socket.io
 		-multiple clients at the same time
 	*express
 	-auth
+
+todo:
+	x-templat design
+		x-top-bar
+		x-side-bar
+		x-main
+	x-chat page
+		-chat
+			-bubble message
+
+	x-chat input
+	x-server/client communication.
+	x-convert server answer to html element.
+	-entry (login)
+		-backend
+		-frontend
+	-rooms
+		-backend
+		-frontend
+	-leave chat
+
+current issues:
+	-input is multi-line, but received msg is not.
