@@ -47,12 +47,12 @@ todo:
 	x-chat input
 	x-server/client communication.
 	x-convert server answer to html element.
-	-entry (login)
-		-backend
-		-frontend
-	-rooms
-		-backend
-		-frontend
+	xentry (login)
+		xbackend
+		xfrontend
+	xrooms
+		xbackend
+		xfrontend
 	-leave chat
 
 current issues:
