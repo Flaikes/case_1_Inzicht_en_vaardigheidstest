@@ -8,45 +8,10 @@
                 <m>M</m>chat
             </logo>
         </header>
-        <side-bar id="side-bar" class="">
-            <room>
-                <img src="https://picsum.photos/201">
-                <container>
-                    <name>YouTube</name>
-                    <sub-title>4 people online</sub-title>
-                </container>
-            </room>
-            <room>
-                <img src="https://picsum.photos/202">
-                <container>
-                    <name>Netflix</name>
-                    <sub-title>12 people online</sub-title>
-                </container>
-            </room>
-            <room>
-                <img src="https://picsum.photos/203">
-                <container>
-                    <name>stack<b>overflow</b></name>
-                    <sub-title>312 people online</sub-title>
-                </container>
-            </room>
-            <room>
-                <img src="https://picsum.photos/204">
-                <container>
-                    <name>GitHub</name>
-                    <sub-title>4 people online</sub-title>
-                </container>
-            </room>
-            <room>
-                <img src="https://picsum.photos/205">
-                <container>
-                    <name>Advent of Code</name>
-                    <sub-title>0 people online</sub-title>
-                </container>
-            </room>
-        </side-bar>
-        <main id="main" class="">
-            <login style="display: none">
+        <left-bar id="left-bar" class="hidden">
+        </left-bar>
+        <main id="main" class="wide">
+            <login id="login">
                 <top-bar>
                     <logo>
                         <m>M</m>chat
@@ -55,70 +20,14 @@
                 <p>
                     Welcome! <br> Pick a username to start chatting.
                 </p>
-                <form>
+                <form id="login-form">
                     <a>Username:</a></br>
                     <input type="text" name="username" id="username" required>
                 </form>
             </login>
-            <chat>
-                <bubble class="out">
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a ipsum orci. Aenean massa dui, elementum eu elementum a, aliquet a tortor. Sed iaculis in ante semper interdum. Etiam sodales mauris et nibh bibendum, in dictum arcu maximus. Curabitur nisi nunc, mollis non lacus in, efficitur dignissim velit. Donec a elementum nunc. Sed gravida libero id pharetra vehicula. Vestibulum nibh metus, viverra a hendrerit a, porttitor eu risus. Mauris ac maximus nulla. Sed vulputate molestie lacus. Suspendisse eleifend augue a mauris consequat, sed sodales ligula sodales. Nullam dictum nec metus interdum ultrices. Vestibulum tempor diam sit amet porta pretium. Donec eget sollicitudin ligula. Aenean viverra ultrices arcu, ac gravida enim aliquam sed. 
-                    </p>
-                    <time>11:23</time>
-                </bubble>
-                <bubble class="out">
-                    <p>
-                        Lorem ipsum
-                    </p>
-                    <time>11:23</time>
-                </bubble>
-                <bubble class="neutral">
-                    User joined this channel!
-                </bubble>
-                <bubble class="in">
-                    <name>Felix de Klerk</name>
-                    <p>
-                        Lorem ipsum
-                    </p>
-                    <time>11:23</time>
-                </bubble>
-                <bubble class="out">
-                    <p>
-                        Lorem ipsum
-                    </p>
-                    <time>11:23</time>
-                </bubble>
-                <bubble class="out">
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a ipsum orci. Aenean massa dui, elementum eu elementum a, aliquet a tortor. Sed iaculis in ante semper interdum. Etiam sodales mauris et nibh bibendum, in dictum arcu maximus. Curabitur nisi nunc, mollis non lacus in, efficitur dignissim velit. Donec a elementum nunc. Sed gravida libero id pharetra vehicula. Vestibulum nibh metus, viverra a hendrerit a, porttitor eu risus. Mauris ac maximus nulla. Sed vulputate molestie lacus. Suspendisse eleifend augue a mauris consequat, sed sodales ligula sodales. Nullam dictum nec metus interdum ultrices. Vestibulum tempor diam sit amet porta pretium. Donec eget sollicitudin ligula. Aenean viverra ultrices arcu, ac gravida enim aliquam sed. 
-                    </p>
-                    <time>11:23</time>
-                </bubble>
-                <bubble class="out">
-                    <p>
-                        Lorem ipsum
-                    </p>
-                    <time>11:23</time>
-                </bubble>
-                <bubble class="neutral">
-                    User joined this channel!
-                </bubble>
-                <bubble class="in">
-                    <name>Felix de Klerk</name>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a ipsum orci. Aenean massa dui, elementum eu elementum a, aliquet a tortor. Sed iaculis in ante semper interdum. Etiam sodales mauris et nibh bibendum, in dictum arcu maximus. Curabitur nisi nunc, mollis non lacus in, efficitur dignissim velit. Donec a elementum nunc. Sed gravida libero id pharetra vehicula. Vestibulum nibh metus, viverra a hendrerit a, porttitor eu risus. Mauris ac maximus nulla. Sed vulputate molestie lacus. Suspendisse eleifend augue a mauris consequat, sed sodales ligula sodales. Nullam dictum nec metus interdum ultrices. Vestibulum tempor diam sit amet porta pretium. Donec eget sollicitudin ligula. Aenean viverra ultrices arcu, ac gravida enim aliquam sed. 
-                    </p>
-                    <time>11:23</time>
-                </bubble>
-                <bubble class="out">
-                    <p>
-                        Lorem ipsum
-                    </p>
-                    <time>11:23</time>
-                </bubble>
+            <chat id="chat" class="hidden">
             </chat>
-            <input-area>
+            <input-area id="input" class="hidden">
                 <form id="chat-form">
                     <container id="msgContainer">
                         <textarea type="text" name="message" id="concept" placeholder="Type a message" rows="1"></textarea>
@@ -126,6 +35,8 @@
                 </form>
             </input-area>
         </main>
+        <right-bar id="right-bar" class="hidden">
+        </right-bar>
         <script src="/socket.io/socket.io.js"></script>
         <script src="script.js"></script>
     </body>
