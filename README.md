@@ -1,19 +1,19 @@
-#case_1_inzicht_en_vaardigheidstest
+# case_1_inzicht_en_vaardigheidstest
 
-Een chat applicatie geschreven in JavaScript met Socket.io in Node.js.
+## Een chat applicatie geschreven in JavaScript met Socket.io in Node.js.
 
 Deze simpele chat-app geeft gebruikers de mogelijkheid om in verschillende rooms met elkaar te chatten.
 Ook is het mogelijk om uit de lijst met users een enkele user te selecteren om prive te chatten.
 De app maakt gebruik van Socket.io. Dit maakt op een intuitieve manier een realtime, bidirectionele communicatie mogelijk.
 
 Om deze app op je eigen machine te runnen heb je Node.js nodig: [how to install Node.js](https://nodejs.dev/en/learn/how-to-install-nodejs/)
-Om de code uit te voeren moet je eerst in de correcte folder zijn. 
+Om de code uit te voeren moet je eerst in de correcte folder zijn. <br />
 `cd chat-app`
-Vervolgens:
-`node .`
+Vervolgens: <br />
+`node .` <br />
 Gebruikt automatisch index.js . En laat de gebruikte port zien.
 
-Om de resulterende app te openen in een browser ga naar http://localhost:{PORT}/chat.htm, waarbij {PORT} vervangen moet worden. Waarschijnlijk deze [link](http://localhost:3000/chat.htm).
+Om de resulterende app te openen in een browser ga naar `http://localhost:{PORT}/chat.htm`, waarbij {PORT} vervangen moet worden. Waarschijnlijk deze [link](http://localhost:3000/chat.htm).
 
 Deze app is gemaakt om mijn inzicht en vaardigheden te tonen.
 Case omschrijving :
