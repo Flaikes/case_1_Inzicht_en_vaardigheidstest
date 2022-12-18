@@ -171,9 +171,28 @@ right-bar{
     transition: transform 1s;
 }
 
-right-bar::before{
+right-bar online, right-bar in-room{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+right-bar online::before{
     color: white;
     content: 'Users online:';
+}
+
+right-bar online user::after{
+    content: '[' attr(room) ']';
+}
+
+right-bar in-room::before{
+    color: white;
+    content: 'Users in room:';
+}
+
+right-bar in-room.hidden{
+    display: none;
 }
 
 right-bar.hidden{

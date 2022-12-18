@@ -8,7 +8,7 @@ De app maakt gebruik van Socket.io. Dit maakt op een intuitieve manier een realt
 
 Om deze app op je eigen machine te runnen heb je Node.js nodig: [how to install Node.js](https://nodejs.dev/en/learn/how-to-install-nodejs/)
 Om de code uit te voeren moet je eerst in de correcte folder zijn. <br />
-`cd chat-app`
+`cd chat-app` <br />
 Vervolgens: <br />
 `node .` <br />
 Gebruikt automatisch index.js . En laat de gebruikte port zien.

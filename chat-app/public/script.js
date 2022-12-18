@@ -2,7 +2,11 @@ const socket = io();
 const date = new Date();
 
 // Get rooms
-socket.on("publicRoom", (id, name, count) => {
+
+let roomCount = { 
+    "-1": 0
+};
+socket.on("publicRoom", (id, name) => {
     const room = document.createElement("room");
     room.setAttribute("onclick", `joinRoom(${id})`);
     room.setAttribute("id", `room${id}`);
@@ -10,22 +14,29 @@ socket.on("publicRoom", (id, name, count) => {
     <img src="https://picsum.photos/20${id}">
     <container>
         <name>${name}</name>
-        <sub-title id="sub${id}" count="${count}"> people online</sub-title>
+        <sub-title id="sub${id}" count="0"> people online</sub-title>
     </container>
     `;
     leftBar.appendChild(room);
+    roomCount[id] = 0;
 });
 
 // Join room
-var currentRoom = -1;
+let currentRoom = -1;
 
 function joinRoom(room){
     if(room != currentRoom){
         //clear chat
         chat.innerHTML = "";
-        rightBar.innerHTML = "";
-        rightBar.classList.remove("hidden");
-        main.classList.remove("halfWide");
+
+        //update users in room bar
+        inRoom.innerHTML = "";
+        inRoom.classList.remove("hidden");
+        for(let i = 0; i < users.length; i++){
+            if(users[i].room == room){
+                newUserInRoom(users[i]);
+            }
+        }
 
         //communicate room change to server
         socket.emit("joinRoom", room, false);
@@ -39,28 +50,81 @@ function joinRoom(room){
     }
 }
 
+const inRoom = document.getElementById("in-room");
+const online = document.getElementById("online");
+let users = [];
+
 // Get users
 socket.on("user", (user) => {
-    if(user.room ==  currentRoom){
-        const userElement = document.createElement("user");
-        userElement.setAttribute("onclick", `chatTo("${user.id}", "${user.name}")`);
-        userElement.setAttribute("id", `${user.id}`);
-        userElement.classList.add("in");
-        userElement.innerHTML = `
-        <name>${user.name}</name>
-        `;
-        rightBar.appendChild(userElement);
-    }
+    users.push(user);
+    const userElement = document.createElement("user");
+    userElement.setAttribute("onclick", `chatTo("${user.id}", "${user.name}")`);
+    userElement.setAttribute("id", `${user.id}`);
+    userElement.setAttribute("room", `${user.room}`);
+    userElement.innerHTML = `
+    <name>${user.name}</name>
+    `;
+    online.appendChild(userElement);
+
+    //update count
+    roomCount[user.room]++;
+    document.getElementById(`sub${user.room}`).setAttribute("count", roomCount[user.room]);
 });
 
 // Remove users
-socket.on("removeUser", (user) =>{
-    if(currentRoom != -1){
-        if(user.room == currentRoom){
-            rightBar.removeChild(document.getElementById(user.id));
-        }
+socket.on("userLeave", (user) =>{
+    online.removeChild(document.getElementById(`${user.id}`)); // fix online tab
+
+    // fix in-room tab
+    if(users.find(u => u.id === user.id).room == currentRoom){ // if user left current room
+        inRoom.removeChild(document.getElementById(`inroom+${user.id}`));
     }
+
+    roomCount[user.room]--;
+    if(document.getElementById(`sub${user.room}`)){
+        document.getElementById(`sub${user.room}`).setAttribute("count", roomCount[user.room]);
+    }
+
+    users = users.filter(u => u.id !== user.id);
 });
+
+// User change
+socket.on("userChange", user => {
+    document.getElementById(user.id).setAttribute("room", user.room); // fix online tab
+    // fix in-room tab
+    if(users.find(u => u.id === user.id).room == currentRoom && currentRoom != -1){ // if user left current room
+        inRoom.removeChild(document.getElementById(`inroom+${user.id}`));
+    }
+    if(user.room == currentRoom){
+        newUserInRoom(user);
+    }
+
+    //update count
+    if(users.find(u => u.id === user.id).room != "private"){
+        roomCount[users.find(u => u.id === user.id).room]--;
+        document.getElementById(`sub${users.find(u => u.id === user.id).room}`).setAttribute("count", roomCount[users.find(u => u.id === user.id).room]);    
+    }
+    
+    if(user.room != "private"){
+        roomCount[user.room]++;
+        document.getElementById(`sub${user.room}`).setAttribute("count", roomCount[user.room]);
+    }
+
+    //fix userlist variable
+    users = users.filter(u => u.id !== user.id);
+    users.push(user);
+
+});
+
+function newUserInRoom(user){
+    const userElement = document.createElement("user");
+    userElement.setAttribute("onclick", `chatTo("${user.id}", "${user.name}")`);
+    userElement.setAttribute("id", `inroom+${user.id}`);
+    userElement.innerHTML = `
+    <name>${user.name}</name>
+    `;
+    inRoom.appendChild(userElement);
+}
 
 // New private chat
 socket.on("privateRoom", (id, name) => {
@@ -86,28 +150,28 @@ function joinPrivate(room){
     if(room != currentRoom){
         //clear chat
         chat.innerHTML = "";
-        rightBar.classList.add("hidden");
-        main.classList.add("halfWide");
+
+        //update users in room bar
+        inRoom.innerHTML = "";
+        inRoom.classList.add("hidden");
+        for(let i = 0; i < users.length; i++){
+            if(users[i].room == room){
+                newUserInRoom(users[i]);
+            }
+        }
 
         //communicate room change to server
         socket.emit("joinRoom", room, true);
         
         //update style
-
         if(currentRoom != -1){
             document.getElementById(`room${currentRoom}`).classList.remove("active");
         }
         document.getElementById(`room${room}`).classList.add("active");
-        document.getElementById(`room${room}`).classList.remove("new");
+        document.getElementById(`room${room}`).classList.add("new");
         currentRoom = room;
     }
 }
-
-// Update user count
-socket.on("newCount", (id, count) => {
-    console.log("newCount", count, id);
-    document.getElementById(`sub${id}`).setAttribute("count", count);
-});
 
 var username = "";
 // Login submit

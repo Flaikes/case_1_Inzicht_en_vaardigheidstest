@@ -11,18 +11,21 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Rooms
 class room{
-    users = [];
     constructor(id, name){
         this.id = id;
         this.name = name;
     }
 }
 
-var rooms = [];
-addRoom(0, "YouTube");
-addRoom(1, "Netflix");
-addRoom(2, "stack<b>overflow</b>");
-addRoom(3, "Advent of Code");
+const rooms = [];
+let roomIdIncr = 0;
+addRoom("YouTube");
+addRoom("Netflix");
+addRoom("stack<b>overflow</b>");
+addRoom("Advent of Code");
+const privateRooms = [];
+
+let users = [];
 
 // Client/server connections
 io.on("connection", socket =>{
@@ -33,18 +36,16 @@ io.on("connection", socket =>{
         room: -1
     };
 
-    var privateRooms = [];
-
     // On login
     socket.on("join", username_ => {
         user = userJoin(user.id, username_, -1);
 
-        // To user 
+        // To user welcome instruction
         socket.emit("messageIn", formatMessage("Mchat*", `<br>Hey, ${user.name}!<br>Select a room to start chatting! &#128512; &#128525; &#128151;<br><br>`));
         
         // Show rooms
         for( let i = 0; i < rooms.length; i++){
-            socket.emit("publicRoom", rooms[i].id, rooms[i].name, rooms[i].users.length)
+            socket.emit("publicRoom", rooms[i].id, rooms[i].name)
         }
 
         // Show users
@@ -65,42 +66,20 @@ io.on("connection", socket =>{
             // To room that was left
             socket.broadcast.to(user.room).emit("messageNeutral", `${user.name} left chat`);
 
-            if(!prevRoomIsPrivate){
-                socket.leave(user.room);
-
-                // Update everyone's userlist
-                io.emit("removeUser", user);
-
-                // Remove user from rooms[x]
-                const oldRoomIndex = rooms.findIndex( r => r.id === user.room);
-                rooms[oldRoomIndex].users = rooms[oldRoomIndex].users.filter( u => u.id !== user.id);
-                // Update count
-                io.emit("newCount", user.room, rooms[oldRoomIndex].users.length);
-            }
+            socket.leave(user.room);
         }
 
-        if(private){
-            prevRoomIsPrivate = true;
+        // To everyone show change
+        if(private){ 
+            user.room = "private"; 
+            io.emit("userChange", user);
         }else{
-            prevRoomIsPrivate = false;
+            user.room = room;
+            io.emit("userChange", user);
         }
-
+        
         // Join new room
-        user.room = room;
         socket.join(user.room);
-        if(!private){
-            rooms.find( r => r.id === room).users.push(user);
-            io.emit("newCount", user.room, rooms.find( r => r.id === room).users.length);
-
-            // Show users
-            const tempUsers = rooms.find( r => r.id === room).users;
-            for( let i = 0; i < tempUsers.length; i++){
-                socket.emit("user", tempUsers[i]);
-            }
-
-            // Show to users
-            socket.broadcast.emit("user", user);
-        }
 
         // To everyone but that user
         socket.broadcast.to(user.room).emit("messageNeutral", `${user.name} joined chat`); 
@@ -116,9 +95,11 @@ io.on("connection", socket =>{
 
     // On private message
     socket.on("privateMessage", (id, name) => {
-        if(privateRooms.includes(`${id}&${user.id}`) == false
-           && privateRooms.includes(`${user.id}&${id}`) == false
-           && id != user.id){ // If not already chatting 
+
+        if(privateRooms.includes(`${id}&${user.id}`) == false       // If not already chatting
+           && privateRooms.includes(`${user.id}&${id}`) == false    // 
+           && id != user.id){                                       // and not trying to message self
+
             socket.emit("privateRoom", `${id}&${user.id}`, name);
             io.to(id).emit("privateRoom", `${id}&${user.id}`, user.name);
             privateRooms.push(`${id}&${user.id}`);
@@ -126,26 +107,15 @@ io.on("connection", socket =>{
         }
     });
 
-    // On user disconnect, to everyone
+    // On user disconnect
     socket.on("disconnect", () => {
+
+        // To room
         io.to(user.room).emit("messageNeutral", `${user.name} left chat`);
 
-        io.emit("removeUser", user);
+        io.emit("userLeave", user);
     
-        // Leave last room
-        if(user.room != -1){
-            // To room that was left
-            socket.broadcast.to(user.room).emit("messageNeutral", `${user.name} left chat`);
-
-            socket.leave(user.room);
-
-            // Remove user from rooms[x]
-            if(!prevRoomIsPrivate){
-                const oldRoomIndex = rooms.findIndex( r => r.id === user.room);
-                rooms[oldRoomIndex].users = rooms[oldRoomIndex].users.filter( u => u.id !== user.id);
-            }
-        }
-        users = users.filter( u => u.id !== user.id);
+        userLeave(user.id);
     });
 })
 
@@ -164,8 +134,6 @@ function formatMessage(username, text){
     } 
 }
 
-let users = [];
-
 function userJoin(id, name, room){
     const user = {id, name, room};
     console.log("NEW USER", user);
@@ -174,10 +142,11 @@ function userJoin(id, name, room){
     return user;
 }
 
-function getUser(id){
-    return users.find(user => user.id === id);
+function userLeave(id){
+    users = users.filter(user => user.id !== id);
 }
 
-function addRoom(id, name){
-    rooms.push(new room(id, name));
+function addRoom(name){
+    rooms.push(new room(roomIdIncr, name));
+    roomIdIncr++;
 }
